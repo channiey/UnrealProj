@@ -25,4 +25,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	void OnMoveForward(float Axis);		// << : 키보드 움직임 구현
+	void OnMoveRight(float Axis);		
+
+	void OnHorizontalLook(float Axis);	// << : 마우스 움직임 구현
+	void OnVerticalLook(float Axis);
 };
