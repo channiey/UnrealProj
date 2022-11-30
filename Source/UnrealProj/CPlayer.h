@@ -32,4 +32,7 @@ private:
 
 	void OnHorizontalLook(float Axis);	// << : 마우스 움직임 구현
 	void OnVerticalLook(float Axis);
+
+	void OnRunning(); // << : For Animation
+	void OffRunning();
 };

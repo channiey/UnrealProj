@@ -1,5 +1,6 @@
 #include "CPlayer.h"
-#include "Global.h" // << :
+#include "Global.h"										// << :
+#include "CAnimInstance.h"								// << :
 #include "GameFramework/SpringArmComponent.h"			// << :
 #include "GameFramework/CharacterMovementComponent.h"	// << :
 #include "Camera/CameraComponent.h"						// << :
@@ -25,6 +26,11 @@ ACPlayer::ACPlayer()
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -90));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
 
+	// << : Set the Animation
+	TSubclassOf<UAnimInstance> animInstance;
+	CHelpers::GetClass<UAnimInstance>(&animInstance, "AnimBlueprint'/Game/ABP_CPlayer.ABP_CPlayer_C'");
+	GetMesh()->SetAnimInstanceClass(animInstance);
+
 	// << : Set the Camera
 	SpringArm->SetRelativeLocation(FVector(0, 0, 60));
 	SpringArm->TargetArmLength = 200.0f;
@@ -49,11 +55,15 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
-	// << : 키 세팅을 함수와 연결
+	// << : 축 매핑 키세팅을 함수와 연결
 	PlayerInputComponent->BindAxis("MoveForward", this, &ACPlayer::OnMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACPlayer::OnMoveRight);
 	PlayerInputComponent->BindAxis("HorizontalLook", this, &ACPlayer::OnHorizontalLook);
 	PlayerInputComponent->BindAxis("VerticalLook", this, &ACPlayer::OnVerticalLook);
+
+	// << : 액션 매핑 키세팅을 함수와 연결	
+	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Pressed, this, &ACPlayer::OnRunning);
+	PlayerInputComponent->BindAction("Running", EInputEvent::IE_Released, this, &ACPlayer::OffRunning);
 }
 
 
@@ -87,5 +97,15 @@ void ACPlayer::OnHorizontalLook(float Axis)
 void ACPlayer::OnVerticalLook(float Axis)
 {
 	AddControllerPitchInput(Axis);
+}
+
+void ACPlayer::OnRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+}
+
+void ACPlayer::OffRunning()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 }
 
